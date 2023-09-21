@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>slot-canvas</title>
-    <script src="./kmeans.js"></script>
+    <script src="js/kmeans.js"></script>
 </head>
 <body>
     <input type="file" id="imageUpload" accept="image/*" />
@@ -107,7 +107,7 @@
 
                 // 添加颜色断点，使用rgba设置透明度
                 gradient.addColorStop(0, `rgba(${centroids[0][0]}, ${centroids[0][1]}, ${centroids[0][2]}, 0)`);
-                gradient.addColorStop(0.3, `rgba(${centroids[0][0]}, ${centroids[0][1]}, ${centroids[0][2]}, 0.7)`);
+                gradient.addColorStop(0.1, `rgba(${centroids[0][0]}, ${centroids[0][1]}, ${centroids[0][2]}, 0.99)`);
                 gradient.addColorStop(1, `rgba(${centroids[0][0]}, ${centroids[0][1]}, ${centroids[0][2]}, 1)`);
                 //    gradient.addColorStop(0, 'rgba(255, 255, 255, 1)'); // 白色
                 //    gradient.addColorStop(1, 'rgba(0, 0, 0, 1)'); // 黑色
@@ -118,5 +118,5 @@
                 ctx.fillRect(0, imgH - gradientHeight, imgW, gradientHeight);
 
             }
-        </script>
-        </html>
+</script>
+</html>

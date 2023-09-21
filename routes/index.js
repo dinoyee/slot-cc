@@ -9,4 +9,10 @@ router.get('/', (req, res) => {
   });
 });
 
+router.get('/cc', (req, res) => {
+  res.render('canvas', {
+    layout: false
+  });
+});
+
 module.exports = router;
