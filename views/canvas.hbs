@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>slot-canvas</title>
+    <script src="./kmeans.js"></script>
+</head>
+<body>
+    <input type="file" id="imageUpload" accept="image/*" />
+    <canvas id="canvas"></canvas>
+</body>
+<script>
+    // 获取相关的元素
+    const imageUpload = document.getElementById('imageUpload');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    var imgW, imgH
+
+    // 监听文件上传事件
+    imageUpload.addEventListener('change', handleImageUpload);
+
+    function handleImageUpload(event) {
+        const file = event.target.files[0];
+
+        // 检查是否是图片
+        if (file && file.type.startsWith('image')) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = new Image();
+                img.src = e.target.result;
+
+                // 加载图片后绘制到画布上
+                img.onload = function () {
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    imgW = img.width;
+                    imgH = img.height
+                    ctx.drawImage(img, 0, 0);
+
+                    getImageColors()
+                };
+            };
+            reader.readAsDataURL(file);
+        } else {
+            alert('Please upload a valid image file.');
+        }
+    }
+
+    function getImageColors() {
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imageData.data;
+        const colors = [];
+
+        for (let i = 0; i < data.length; i += 4) {
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+            var rgb = [];
+            rgb[0] = r;
+            rgb[1] = g;
+            rgb[2] = b;
+            //        const rgb = `${r},${g},${b}`;
+
+            colors.push(rgb)
+
+            //        if (colors[rgb]) {
+                //            colors[rgb]++;
+                //        } else {
+                    //            colors[rgb] = 1;
+                    //        }
+                }
+
+                console.log('Color frequencies:', colors);
+
+                quantizeColors(colors, 2)
+            }
+
+            function quantizeColors(colors, n) {
+                // Convert colors to an array of RGB values
+                //    const colorValues = Object.keys(colors).map(rgb => rgb.split(',').map(Number));
+
+                // Initialize k-means with the color values
+                const kmeans = new KMeans(colors, n);
+                const { centroids } = kmeans.run();
+
+                console.log('centroids', centroids)
+
+
+                centroids[0][0] = Math.floor(centroids[0][0]);
+                centroids[0][1] = Math.floor(centroids[0][1]);
+                centroids[0][2] = Math.floor(centroids[0][2]);
+
+                console.log('MainColor', centroids)
+
+                ctx.fillStyle = `rgb(${centroids[0][0]}, ${centroids[0][1]}, ${centroids[0][2]})`;
+                ctx.fillRect(0, 0, 50, 50);
+
+                ///
+
+                const gradientHeight = imgH / 4; // 渐变高度为50px
+
+                // 创建线性渐变对象
+                const gradient = ctx.createLinearGradient(0, imgH - gradientHeight, 0, imgH);
+
+                // 添加颜色断点，使用rgba设置透明度
+                gradient.addColorStop(0, `rgba(${centroids[0][0]}, ${centroids[0][1]}, ${centroids[0][2]}, 0)`);
+                gradient.addColorStop(0.3, `rgba(${centroids[0][0]}, ${centroids[0][1]}, ${centroids[0][2]}, 0.7)`);
+                gradient.addColorStop(1, `rgba(${centroids[0][0]}, ${centroids[0][1]}, ${centroids[0][2]}, 1)`);
+                //    gradient.addColorStop(0, 'rgba(255, 255, 255, 1)'); // 白色
+                //    gradient.addColorStop(1, 'rgba(0, 0, 0, 1)'); // 黑色
+
+
+                // 填充矩形
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, imgH - gradientHeight, imgW, gradientHeight);
+
+            }
+        </script>
+        </html>
